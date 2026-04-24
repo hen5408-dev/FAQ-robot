@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小智｜智平衡 AI 客服</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g1:#1a5c38;--g2:#217a4a;--g3:#27ae60;--g4:#2ecc71;
+  --gp:#f0faf4;--gl:#a8dfc0;
+  --bg:#f5faf7;--white:#fff;
+  --t9:#1a1a18;--t7:#3d3d3a;--t6:#5f5e5a;--t4:#9c9a92;--t2:#e0dfdc;
+  --shadow:0 1px 4px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.05);
+  --font:'Noto Sans TC',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--t9);display:flex;flex-direction:column}
+.hdr{background:linear-gradient(135deg,var(--g1) 0%,var(--g2) 60%,var(--g3) 100%);padding:0 20px;height:60px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(26,92,56,.3);flex-shrink:0}
+.hdr-logo{width:40px;height:40px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1.5px solid rgba(255,255,255,.35)}
+.hdr-logo svg{width:22px;height:22px;fill:#fff}
+.hdr-info{flex:1}
+.hdr-name{font-size:15px;font-weight:700;color:#fff}
+.hdr-sub{font-size:11px;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:4px;margin-top:1px}
+.dot{width:6px;height:6px;border-radius:50%;background:#a8ff8a;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hdr-badge{background:rgba(255,255,255,.2);color:#fff;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.35);white-space:nowrap}
+#chatArea{flex:1;overflow-y:auto;padding:20px 0;scroll-behavior:smooth}
+#chatWrap{max-width:800px;width:100%;margin:0 auto;padding:0 16px;display:flex;flex-direction:column;gap:4px}
+#welcome{text-align:center;padding:24px 16px 20px}
+.welcome-icon{width:72px;height:72px;background:linear-gradient(135deg,var(--g2),var(--g4));border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(33,122,74,.3)}
+.welcome-icon svg{width:36px;height:36px;fill:#fff}
+.welcome-title{font-size:19px;font-weight:700;color:var(--g1);margin-bottom:6px}
+.welcome-sub{font-size:13px;line-height:1.9;color:var(--t6);margin-bottom:22px}
+.cat-wrap{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px}
+.cat-btn{padding:8px 18px;border-radius:22px;border:1.5px solid var(--gl);background:var(--white);color:var(--g1);font-family:var(--font);font-size:12px;font-weight:500;cursor:pointer;transition:.18s}
+.cat-btn:hover,.cat-btn.active{background:var(--g3);border-color:var(--g3);color:#fff;box-shadow:0 2px 8px rgba(39,174,96,.35)}
+.sugg-wrap{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.sugg{padding:8px 14px;border-radius:8px;border:1px solid var(--t2);background:var(--white);color:var(--t7);font-family:var(--font);font-size:12px;cursor:pointer;transition:.15s;text-align:left}
+.sugg:hover{border-color:var(--g3);color:var(--g1);background:var(--gp)}
+.msg-row{display:flex;gap:9px;align-items:flex-end;margin-bottom:10px;animation:msgIn .22s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.msg-row.user{flex-direction:row-reverse}
+.avatar{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.bot-av{background:linear-gradient(135deg,var(--g1),var(--g3));color:#fff}
+.user-av{background:var(--t2);color:var(--t6)}
+.bubble{max-width:75%;padding:12px 16px;border-radius:18px;font-size:14px;line-height:1.85;word-break:break-word}
+.bot-b{background:var(--white);border:1px solid var(--t2);border-bottom-left-radius:4px;box-shadow:var(--shadow);color:var(--t9)}
+.user-b{background:linear-gradient(135deg,var(--g2),var(--g3));color:#fff;border-bottom-right-radius:4px;box-shadow:0 2px 8px rgba(33,122,74,.25)}
+.ts{font-size:10px;color:var(--t4);font-family:var(--mono);padding:0 3px;flex-shrink:0}
+.typing-b{background:var(--white);border:1px solid var(--t2);border-radius:18px;border-bottom-left-radius:4px;padding:14px 18px;box-shadow:var(--shadow);display:flex;gap:5px;align-items:center}
+.td{width:7px;height:7px;border-radius:50%;background:var(--gl);animation:bounce .8s infinite}
+.td:nth-child(2){animation-delay:.15s}.td:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-7px)}}
+.srcs{margin-top:8px;display:flex;flex-wrap:wrap;gap:5px}
+.stag{font-size:11px;background:var(--gp);color:var(--g1);padding:2px 8px;border-radius:4px;font-family:var(--mono);border:1px solid var(--gl)}
+.input-bar{background:var(--white);border-top:1px solid var(--t2);padding:12px 16px;flex-shrink:0}
+.input-inner{max-width:800px;margin:0 auto;display:flex;gap:10px;align-items:flex-end}
+#inputBox{flex:1;padding:11px 14px;border:1.5px solid var(--t2);border-radius:12px;font-family:var(--font);font-size:14px;color:var(--t9);background:var(--bg);resize:none;outline:none;line-height:1.5;min-height:44px;max-height:120px;transition:border-color .15s}
+#inputBox:focus{border-color:var(--g3);background:var(--white)}
+#inputBox::placeholder{color:var(--t4)}
+#sendBtn{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--g2),var(--g3));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s}
+#sendBtn:hover{background:linear-gradient(135deg,var(--g1),var(--g2));box-shadow:0 2px 8px rgba(33,122,74,.4)}
+#sendBtn:disabled{background:var(--t2);cursor:not-allowed;box-shadow:none}
+#sendBtn svg{width:18px;height:18px;fill:#fff}
+.hint{font-size:11px;color:var(--t4);text-align:center;margin-top:6px;max-width:800px;margin-left:auto;margin-right:auto}
+#chatArea::-webkit-scrollbar{width:5px}
+#chatArea::-webkit-scrollbar-track{background:transparent}
+#chatArea::-webkit-scrollbar-thumb{background:var(--gl);border-radius:3px}
+@media(max-width:500px){.hdr-badge{display:none}.bubble{max-width:86%}}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-logo"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg></div>
+  <div class="hdr-info">
+    <div class="hdr-name">小智｜智平衡 AI 客服</div>
+    <div class="hdr-sub"><span class="dot"></span>線上服務中</div>
+  </div>
+  <div class="hdr-badge">拉菲爾人本診所</div>
+</header>
+<div id="chatArea"><div id="chatWrap">
+  <div id="welcome">
+    <div class="welcome-icon"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg></div>
+    <div class="welcome-title">您好！我是小智 👋</div>
+    <div class="welcome-sub">智平衡健康事業 AI 助理<br>請選擇產品類別，或直接輸入您的問題</div>
+    <div class="cat-wrap">
+      <button class="cat-btn" onclick="setCat('6th',this)">🔴 第六代紅光極智衣</button>
+      <button class="cat-btn" onclick="setCat('home',this)">🏠 居家治療儀</button>
+      <button class="cat-btn" onclick="setCat('ring',this)">💍 Acer 指環</button>
+      <button class="cat-btn" onclick="setCat('asus',this)">⌚ 華碩手錶</button>
+      <button class="cat-btn" onclick="setCat('garmin',this)">🟢 Garmin 手環</button>
+      <button class="cat-btn" onclick="setCat('fee',this)">💳 費用 / 合約</button>
+      <button class="cat-btn" onclick="setCat('clinic',this)">🏥 診所 / 客服</button>
+    </div>
+    <div class="sugg-wrap" id="suggWrap"></div>
+  </div>
+</div></div>
+<div class="input-bar">
+  <div class="input-inner">
+    <textarea id="inputBox" placeholder="輸入您的問題…" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    <button id="sendBtn" onclick="sendMessage()"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+  </div>
+  <div class="hint">由 AI 自動回覆，重要事項請聯繫診所同仁確認</div>
+</div>
+<script>
+
+const FAQ=[
+{id:"A1.1",cat:"A.費用",q:"第六代紅光轉帳帳號？",a:"戶名：智平衡健康事業股份有限公司\n帳號：0010-3501-7867（國泰世華）"},
+{id:"A1.4",cat:"A.費用",q:"請問開發票還是收據？",a:"我們的產品屬於保健用租賃商品，提供「二聯式發票」。無法提供醫療收據或三聯式發票供公司報帳。"},
+{id:"A2.3",cat:"A.合約",q:"合約到期不續約，要怎麼退還保健衣？",a:"到期日後有三天彈性時間，請將紅光設備及極智衣繳回診所（可郵寄，請在包裹上寫姓名）：\n・台北：台北市中正區館前路49號11樓，(02)2370-1959\n・台中：台中市中區民權路60號3樓，(04)2222-1817\n・高雄：高雄市三民區九如二路366號10樓，(07)323-0919\n宅配限一次免費。"},
+{id:"A2.4",cat:"A.合約",q:"合約結束了想退押金？",a:"需先退還設備，再提供押金退款帳號（存摺封面照片）。押金約15個工作天會匯款，匯款完成後通知確認。"},
+{id:"A2.7",cat:"A.合約",q:"提早解約，費用要怎麼算？",a:"依「實際使用期間比例」計算可退金額，會先扣除客製極智衣耗材費：新台幣50,000元。"},
+{id:"B1.4",cat:"B.第六代",q:"極智衣怎麼穿才對？",a:"1. 裡面不能穿（當內衣穿）\n2. 衣服順順紮進內褲裡\n3. 側邊肩線對齊\n4. 拉鍊在中線，通過肚臍\n5. 將背帶斜揹，調整長度到腰際高度\n每次治療60分鐘，一天最多兩次，需間隔六小時以上。"},
+{id:"B1.8",cat:"B.第六代",q:"極智衣怎麼洗？",a:"1. 先拔開控制器（控制器不可水洗）\n2. 建議3天至2週洗一次\n3. 裝於專用洗衣袋中放入洗衣機清洗\n4. 勿搓揉、擰乾；勿加柔軟精、勿烘乾"},
+{id:"B2.1",cat:"B.第六代",q:"紅光控制器怎麼操作？",a:"1. 衣服穿著完畢\n2. 白色插頭連接在控制器上\n3. 長按電源鍵直至儀器響起\n4. 開機後，連結藍芽\n5. 更新部位確認\n6. 按下功能鍵，開始治療"},
+{id:"B2.2",cat:"B.第六代",q:"燈號說明？",a:"綠燈恆亮：開機/充電完成｜綠燈閃爍：充電中｜白燈恆亮：使用中｜白燈閃爍：暫停中｜黃燈恆亮：電量偏低請充電｜紅燈恆亮：合約到期或六小時冷卻期｜紅燈閃爍：電量太低請充電｜藍燈閃爍：藍芽傳輸中"},
+{id:"B2.5",cat:"B.第六代",q:"一天可以做幾次治療？",a:"一天最多兩次，建議由醫師評估，每次間隔不得少於六小時。"},
+{id:"B3.1",cat:"B.第六代",q:"充電注意事項？",a:"先拔開衣服端，使用專屬充電器，充電時不可同時治療。充電步驟：插電後綠燈閃爍→4~6小時充飽→充電完成後綠燈恆亮→拔插頭。"},
+{id:"B3.3",cat:"B.第六代",q:"充電失敗怎麼辦？",a:"1. 確認使用智平衡提供的充電組\n2. 充電線需完整插入Type C孔\n3. 重新插上插座確認燈號\n注意：電量極低時充滿需6~8小時（保護機制）。"},
+{id:"B3.4",cat:"B.第六代",q:"帶到國外電壓不同，會不會無法充電？",a:"儀器內建變壓器，100~240V均可使用，需自備轉接頭。出國搭飛機：控制器放隨身行李，極智衣可放托運行李。因中國大陸認證機制特殊，無法帶入中國大陸。"},
+{id:"B4.6",cat:"B.第六代",q:"紅光的波長是多少？",a:"660nm區間，屬於有特殊物理特性的可視紅光（非紅外線）。"},
+{id:"B4.8",cat:"B.第六代",q:"有專利號嗎？",a:"TW202029899A、TW202029992A、TWM659528U"},
+{id:"D2.1",cat:"B.第六代",q:"儀器暫停，語音提示接頭接觸不良？",a:"代表白色插頭與連結處鬆脫，請把此處插緊，控制器將自動開始運作。如插緊後仍出現此訊號，請將衣服回送生產部。"},
+{id:"D2.2",cat:"B.第六代",q:"黃燈閃爍是什麼情況？",a:"電量偏低，請於本次使用後立刻進行充電。"},
+{id:"D2.3",cat:"B.第六代",q:"紅燈閃爍是什麼情況？",a:"電量過低，有可能在使用途中斷電，請先充電後再使用。"},
+{id:"D2.6",cat:"B.第六代",q:"出現合約到期提示音，儀器無法正常使用？",a:"先利用基本資料中的【重設藍芽裝置設定】解決。操作：會員中心→基本資料→下滑到【重置藍芽】。"},
+{id:"D2.7",cat:"B.第六代",q:"出現【今日已使用】異常訊號？",a:"1. 確認距上次使用結束，已隔六小時以上\n2. 後台查詢→讀取訂單→開始日期:114/01/01"},
+{id:"D2.12",cat:"B.第六代",q:"使用紀錄未完善？",a:"與儀器版本有關，需為韌體0401版本。若未成功上傳資料，明天開機連藍芽，會將前一天的治療結束紀錄補上傳。"},
+{id:"D2.13",cat:"B.第六代",q:"治療時衣服沒有亮紅光？",a:"1. 確認控制器有無壓實\n2. 確認是否有按治療開始\n3. 從APP後台看有沒有特定哪一組接觸不良"},
+{id:"HA1.1",cat:"C.居家",q:"居家治療怎麼收費？",a:"・2個月(60天)：$90,000\n・3個月(90天)：$126,000\n・儀器押金：$41,000（本島）；金門$50,000"},
+{id:"HA1.2",cat:"C.居家",q:"居家治療匯款帳號是什麼？",a:"・台北/桃園：國泰世華 013 / 001035017751\n・新竹/台中：國泰世華 013 / 001035013683\n・高雄：國泰世華 013 / 001035017867\n匯款後請提供：姓名、出生年月日、匯款戶名、金額日期、帳號末五碼。"},
+{id:"HA1.7",cat:"C.居家",q:"居家治療可以請假嗎？",a:"一個月可以有5天不用理由請假（出差/出遊）。住院開刀不確定天數，則會視公司是否需要儀器先調度回來再回覆患者。"},
+{id:"HA1.13",cat:"C.居家",q:"居家儀器有衛服部認證嗎？",a:"有，醫療器材許可證編號：\n・NC108：衛部醫器製字號 007501號\n・三合一：衛署醫器製字號 000627號"},
+{id:"HB1.2",cat:"C.居家",q:"治療衣能自己洗嗎？",a:"治療衣內層有貼片/導電布，不可自行清洗。請寄回由公司專人清潔與更換貼片。"},
+{id:"HB1.3",cat:"C.居家",q:"治療衣能穿多久？",a:"・第一代貼片：7天\n・第二代貼片：10-14天\n收到新的治療衣後就可改用新的進行治療。"},
+{id:"HC1.1",cat:"C.居家",q:"三合一（定時版）儀器怎麼操作？",a:"1. 確認電源線有插上並長時間插電\n2. 打開左側三個黑色總開關（聽到嗶聲）\n3. 所有旋鈕逆時針轉到底（歸零）\n4. 治療時順時針轉動旋鈕調整強度，以舒服有感為原則\n5. 50分鐘後儀器自動響起，表示治療結束\n6. 旋鈕歸零，關掉總開關（電源線不拔除）"},
+{id:"HC2.1",cat:"C.居家",q:"三合一（密碼版）儀器怎麼操作？",a:"1. 插上電源線（儀器紅燈亮）\n2. 輸入8碼密碼，按下「#」，綠燈亮表示成功\n3. 左側三個總開關全開啟（聽到嗶聲）\n4. 將所有旋鈕逆時針歸零\n5. 順時針調整旋鈕至適合強度開始治療\n6. 治療50分鐘後自動響起，旋鈕歸零並關閉總開關（不拔電源線）\n注意：凌晨02:00-04:00是機器重置校正時間，最晚請在23:00以前開始。"},
+{id:"HC2.2",cat:"C.居家",q:"密碼版：密碼按了，燈號不亮？",a:"・電源線是否常態插在儀器上（應有紅燈）\n・密碼是否按錯\n・是否有按「#」\n・當天是否已治療過\n特殊情況：密碼版常有369號碼（下排）接觸不良，請確認按369鍵是否有嗶音，若無反應可能接觸不良，請通知客服更換儀器。"},
+{id:"HC3.1",cat:"C.居家",q:"NC108儀器怎麼操作？",a:"1. 按左上角電源鍵，綠燈亮起\n2. 確認畫面上的姓名、剩餘天數\n3. 勾選「穿戴完成」與「導線接妥」後按下【下一步】\n4. 依照身體感受調整6個頻道強度\n5. 確認無誤後按【開始】\n6. 50分鐘治療結束後按電源鍵關機\n注意：盡量在當天23:50前開始治療，否則會算至隔天次數。"},
+{id:"HC3.2",cat:"C.居家",q:"NC108治療中想上廁所或發生疼痛怎麼辦？",a:"想上廁所：按【暫停】鍵，回來後按【返回】，儀器自動調回原本強度。每次治療僅限按兩次暫停，勿按電源鍵！暫停保留時間約2-3分鐘。\n治療中疼痛：請按緊急按鈕，再確認貼片是否服貼於皮膚。如果已開始超過三分鐘，關掉電源鍵當天就無法使用。"},
+{id:"HD1.4",cat:"C.居家",q:"居家治療一天可以治療兩次嗎？",a:"醫師建議一天一次就好，居家儀器每日使用一次即已達密集刺激標準，兩次怕身體負擔較大，容易疲倦，效果可能打折。"},
+{id:"HE1.1",cat:"C.居家",q:"居家治療時會刺痛怎麼辦？",a:"1. 確認貼片都是平順於皮膚上\n2. 確認是否強度太強\n3. 檢查衣服裡面的貼片和線是否分離"},
+{id:"HF1.2",cat:"C.居家",q:"居家水凝膠不夠了怎麼辦？",a:"可以郵寄補充或診所自取。沒有水凝膠無法治療，協助請假直至取得水凝膠。自取請先確認診所營業時間。"},
+{id:"HF1.3",cat:"C.居家",q:"居家水凝膠要額外收費嗎？",a:"正常使用下，若提前用完，目前是免費提供。需提出申請（口頭/電話/LINE）。"},
+{id:"R1.1",cat:"D.指環",q:"Acer 指環有哪些健康追蹤功能？",a:"可追蹤：睡眠分析、心率、血氧、壓力指數、活動追蹤與恢復狀態。支援心率、HRV、血氧與睡眠階段分析。所有數據均供日常健康管理參考，不具醫療診斷功能。"},
+{id:"R1.2",cat:"D.指環",q:"Acer 指環要戴在哪個手指？",a:"建議配戴於非慣用手的中指或食指上。確保戒指穩固但不緊繃，以避免妨礙血流或感應異常。"},
+{id:"R1.3",cat:"D.指環",q:"Acer 指環電池可以用多久？",a:"依照使用情境2-4天，實際續航因使用模式而異。建議低於10%即進行充電，避免過度放電。充電時間約60分鐘，充電完成後燈號呈現綠光閃爍。"},
+{id:"R1.4",cat:"D.指環",q:"Acer 指環怎麼充電？",a:"使用隨附磁吸式充電座，僅需放置即可充電。充電規格：DC 5V 1A。長時間不佩戴時，請將電量充至50%以上並關機，勿放在充電裝置上超過一週。"},
+{id:"R1.5",cat:"D.指環",q:"Acer 指環防水嗎？",a:"具備防水設計，可應付日常汗水、雨水及洗手情境。不建議長時間浸泡於水中，亦不建議於游泳、泡澡或溫泉時配戴，以免損壞感測器。"},
+{id:"R1.6",cat:"D.指環",q:"Acer 指環可以戴著睡覺嗎？",a:"可以，建議於夜間持續配戴以獲得完整睡眠數據。"},
+{id:"R1.7",cat:"D.指環",q:"Acer 指環對應哪個App？",a:"請至Google Play或Apple App Store下載「Acer FreeSense Ring」App。相容系統：Android 8.0以上 / iOS 12.0以上。支援同步至Apple Health與Google Health Connect。"},
+{id:"R1.8",cat:"D.指環",q:"Acer 指環藍芽斷線或無法配對怎麼辦？",a:"1. 確認手機藍芽已開啟，且與戒指處於10公尺內範圍\n2. 檢查App是否為最新版本\n3. 嘗試重新啟動手機與App"},
+{id:"R1.9",cat:"D.指環",q:"Acer 指環充電異常怎麼辦？",a:"1. 確認戒指與充電座接點是否有異物，以乾布擦拭後重新放置\n2. 檢查充電器是否正確接上電源與原廠充電線\n如以上方法無效，請聯絡客服中心。"},
+{id:"R1.10",cat:"D.指環",q:"Acer 指環無法運作怎麼辦？",a:"1. 先檢查電池是否電量不足，充電後再嘗試\n2. 若配戴較鬆可能影響感測精準度，請調整位置確保感測器貼合皮膚\n3. 如仍無法正常運作，建議於App中執行「重置戒指」（重置前確認資料已同步至雲端）"},
+{id:"R1.11",cat:"D.指環",q:"Acer 指環怎麼清潔？",a:"每週建議清潔1-2次，以無棉絨柔布輕拭戒指內圈與感測部位。請勿使用：酒精、漂白水、洗碗精、超音波清洗機或吹風機。"},
+{id:"R1.12",cat:"D.指環",q:"Acer 指環如何選擇尺寸？",a:"建議先購買Acer FreeSense Ring尺寸測量組(Sizing Kit)，在家試戴找到最合適的戒圍後，再依實際測量結果購買。若配戴未貼合，可能導致資料遺漏或測量數據不正常。"},
+{id:"R1.13",cat:"D.指環",q:"Acer 指環保固內容為何？",a:"保固期限：發票日+12個月（需檢附電子統一發票）。\n保固範圍：非人為因素導致的功能性故障（感測器異常、電池無法充電、無法開機等）。\n非保固範圍：人為刮傷、撞擊、損壞或非原廠維修所造成之故障。"},
+{id:"R1.14",cat:"D.指環",q:"Acer 指環含鎳嗎？適合過敏膚質嗎？",a:"本產品含有微量鎳元素，鎳含量低於歐盟REACH法規限制標準。由於鎳位於戒指內部，正常使用下皮膚不會直接接觸。若您對鎳特別敏感，建議使用前先諮詢醫師。"},
+{id:"AW1.1",cat:"E.華碩",q:"華碩VivoWatch 6 有哪些功能？",a:"提供：脈波指數（壓力評估）、血氧參考值、活動心率、身體組成分析、睡眠追蹤、放鬆指數測量、計步、運動GPS、天氣、通知等功能。所有健康數據僅供參考，不具醫療診斷功能。"},
+{id:"AW1.2",cat:"E.華碩",q:"華碩手錶怎麼充電？",a:"將USB充電線的充電針腳對準並置於充電連接埠上，連接到電源開始充電（輸入：5Vdc，0.5A）。充電前請確保充電連接埠乾燥，以防腐蝕。"},
+{id:"AW1.3",cat:"E.華碩",q:"華碩手錶對應哪個App？",a:"請下載「ASUS HealthConnect」App（Google Play / App Store）。相容系統：Android 8.0以上 / iOS 13.0以上。初次配對需開啟手機藍芽，並確認手錶在手機3公尺內。"},
+{id:"AW1.4",cat:"E.華碩",q:"華碩手錶怎麼配對？",a:"1. 按住主頁按鈕約1秒將手錶開機\n2. 開啟ASUS HealthConnect App\n3. 依照手機與手錶上的畫面指示完成配對程序"},
+{id:"AW1.5",cat:"E.華碩",q:"華碩手錶防水嗎？",a:"具有5 ATM防水性能，適用於水花時、下雨、淋浴和游泳。請勿在含化學物質或鹽水（海水、游泳池或溫泉）中使用，以免損壞充電連接埠。"},
+{id:"AW1.6",cat:"E.華碩",q:"華碩手錶強制重新啟動怎麼做？",a:"按住「主頁/電源」按鈕10秒鐘。"},
+{id:"AW1.7",cat:"E.華碩",q:"華碩手錶怎麼更新韌體？",a:"1. 開啟ASUS HealthConnect App\n2. 點按主頁底部的「裝置」\n3. 選擇「韌體版本」並點按「檢查更新」"},
+{id:"AW1.8",cat:"E.華碩",q:"華碩手錶如何量血壓/壓力？",a:"VivoWatch 6透過脈波指數（PTT）評估壓力。量測時請將手指輕輕覆蓋在多用途電子感測器與PPG組合感測器上，並保持靜止。"},
+{id:"AW1.9",cat:"E.華碩",q:"華碩手錶身體組成分析怎麼做？",a:"建議在早晨空腹、如廁後進行。有植入心臟起搏器、懷孕、月經期間不可進行測量。操作：食指放在BIA感測器（螢幕外圍金屬環）上，大拇指放在PPG感測器上，保持靜止。"},
+{id:"AW1.10",cat:"E.華碩",q:"華碩手錶一卡通iPASS怎麼用？",a:"本產品支援iPASS一卡通支付功能（僅台灣版）。加值方式：可在捷運站自動加值機台直接加值，或至便利商店加值。使用時請將手錶靜置於感應區，待交易完成後再移開，以免交易失敗。"},
+{id:"GW1.1",cat:"F.Garmin",q:"Garmin手環怎麼配對手機？",a:"1. 安裝並開啟Garmin Connect App\n2. 第一次設定：按下按鍵以開啟手環\n3. 若先前已跳過配對：按鍵→設定→手機→配對手機\n4. 依照App畫面指示完成配對"},
+{id:"GW1.2",cat:"F.Garmin",q:"Garmin手環我的手機無法連結？",a:"1. 將手環帶到手機範圍內\n2. 如已配對：關閉手環與手機的藍芽，再重新開啟\n3. 如未配對：在手機上啟用藍芽，開啟Garmin Connect App→Garmin裝置→新增裝置\n4. 在手環上：按鍵→設定→手機→與手機配對"},
+{id:"GW1.3",cat:"F.Garmin",q:"Garmin手環怎麼充電？",a:"將USB線較小的一端插入手環的充電埠，將USB線較大的一端插入USB供電埠。充電前請清潔並保持傳輸接點乾燥，以免鏽蝕。"},
+{id:"GW1.4",cat:"F.Garmin",q:"Garmin手環怎麼重置？",a:"長按按鍵10秒後放開。手環會短暫顯示三角形，然後顯示錶面。此動作不會刪除任何資料。"},
+{id:"GW1.5",cat:"F.Garmin",q:"Garmin手環步數和帳戶不同步？",a:"與Garmin Connect App同步步數，等待手環同步資料（可能需要幾分鐘）。更新App不會同步資料或更新步數。"},
+{id:"GW1.7",cat:"F.Garmin",q:"Garmin手環心率數據不穩或未出現？",a:"1. 戴上手環前請先清潔並擦乾手腕\n2. 確認手環鬆緊適中，感測器貼合皮膚\n3. 關閉藍芽後重新開啟\n4. 重啟手環及手機"},
+{id:"GW1.8",cat:"F.Garmin",q:"Garmin手環如何關閉來電通知？",a:"方法一（透過Garmin Connect App）：\n1. 開啟Garmin Connect App\n2. 選擇「Garmin裝置」→點擊vivosmart 5\n3. 點選「提醒」→「智慧通知」→「一般使用」\n4. 找到「來電」並切換為「關閉」\n\n方法二（手環上）：在手環上滑動找到「設定」（齒輪圖示）→點擊「勿擾模式」（月亮圖示）開啟"},
+{id:"GW1.9",cat:"F.Garmin",q:"Garmin手環數據未上傳？",a:"Garmin串接需18歲以上註冊。如果已經註冊為18歲以下，建議重新註冊另外一個信箱，並填寫大於18歲以上（2007年前出生）。"},
+{id:"G1.1",cat:"G.APP",q:"Android無法透過App連結藍芽？",a:"1. 先確認手機目前是否有網路，連結WiFi後再試\n2. 重啟App（滑掉後重新開啟）\n3. 重開控制器"},
+{id:"G1.2a",cat:"G.APP",q:"APP如需驗證碼，但個人無法成功時？",a:"可提供公用驗證碼：23709"},
+{id:"G1.5",cat:"G.APP",q:"充電中，可以治療或連藍芽嗎？",a:"不能治療，但可以連藍芽看資料。"},
+{id:"G1.8",cat:"G.APP",q:"藍芽離開多遠會斷線？",a:"建議3-4公尺以內，並且不要有遮蔽物。"},
+{id:"G1.9",cat:"G.APP",q:"治療中，手機滑掉頁面，需要重新連藍芽嗎？",a:"如果滑掉的畫面停留在治療倒數就不需要重新手動連藍芽，會自動再連上（10-30秒）。"},
+{id:"I-1",cat:"H.客服",q:"如何判斷初診還是複診？",a:"複診LINE名字會是「姓名+出生年月日+地區」，例如：許震魚 900722 台北。"},
+{id:"I-3",cat:"H.客服",q:"患者症狀回報怎麼處理？",a:"1. 關懷訊息回覆，轉LINE給詢問的同仁（若為諮詢師，則需開照會）\n2. 若判斷患者症狀惡化，則開照會給所屬醫師\n3. 患者主動訴症狀，開照會給健管組"},
+{id:"I-4",cat:"H.客服",q:"需要直接轉諮詢師的項目有哪些？",a:"以下項目需通知諮詢師並開立照會（不傳訊至諮詢師個人LINE）：\n・解約、續約\n・機器密碼申請（展延）\n・約時間要收機器"},
+{id:"I-5",cat:"H.客服",q:"退押金流程是什麼？",a:"患者確認儀器或衣服已寄送回來並確定結束合約後：\n1. 請患者提供銀行存摺正面照片\n2. 提醒患者程序大約5-7個工作天\n3. 轉帳完成後會再通知患者"},
+{id:"I-6",cat:"H.客服",q:"台北診所停車資訊？",a:"・中正區懷寧街路邊停車場：20元/半小時\n・台北車站西區地下停車場：平日60元/小時，例假日70元/小時\n・台北車站東區地下停車場：平日60元/小時，例假日70元/小時"},
+{id:"I-6b",cat:"H.客服",q:"桃園診所停車資訊？",a:"・中壢停四停車場（限高1公尺）：10元/半小時\n・中北停車場：30元/半小時\n・Times中壢中北路2停車場：50元/半小時（多數無現金繳費，需行動支付）"},
+{id:"I-6c",cat:"H.客服",q:"新竹診所停車資訊？",a:"・遠見停車場（新竹市北區四維路20號）：40元/小時，步行約3分鐘"},
+{id:"I-7",cat:"H.客服",q:"台中診所停車資訊？",a:"・角落停綠川停車場：平日20元/半小時；例假日35元/半小時\n・Times台中綠川西街：平日20元/半小時；例假日35元/半小時\n・Times台中綠川東街：平日20元/半小時；例假日40元/半小時\n注意：Times多數無現金繳費，需行動支付"},
+{id:"I-8",cat:"H.客服",q:"高雄診所停車資訊？",a:"安寧重慶停車場（三民區安寧街）：30元/半小時，步行至診所約3分鐘。路邊停車格：九如路與博愛路兩側"},
+{id:"I-9",cat:"H.客服",q:"為什麼不能開醫療收據或三聯式發票？",a:"我們的產品屬於個人保健用的租賃商品，不是醫療器材或醫療費用，依法提供「二聯式發票」作為個人租賃憑證。目前無法提供三聯式發票或公司統編報帳使用。"},
+{id:"I-10",cat:"H.客服",q:"患者對治療點位開立有疑慮怎麼回覆？",a:"醫師在評估改點的概念，不僅是針對症狀及整體神經的調節，調整自律神經的方式是從平衡的角度，讓器官回歸正軌的運作方式。醫師也有自己的考量來做治療部位的調理，就算是同一種症狀的部位開立，也有幾種模式可以選擇。"},
+];
+
+const WEBHOOK='https://adamyu.app.n8n.cloud/webhook/faq-chat';
+const SUGG={
+  '6th':['極智衣怎麼穿？','一天可以穿幾次？','極智衣怎麼洗？','黃燈/紅燈閃爍是什麼情況？','治療中可以中斷嗎？','充電注意事項？'],
+  'home':['三合一密碼版怎麼操作？','NC108怎麼操作？','治療衣能自己洗嗎？','治療時刺痛怎麼辦？','水凝膠不夠怎麼辦？','一天可以治療兩次嗎？'],
+  'ring':['Acer指環有哪些功能？','電池可以用多久？','防水嗎？','藍芽斷線或無法配對？','充電異常怎麼辦？','怎麼清潔？'],
+  'asus':['VivoWatch 6有哪些功能？','怎麼充電？','對應哪個App？','防水嗎？','強制重啟怎麼做？','一卡通怎麼用？'],
+  'garmin':['Garmin手環怎麼配對手機？','無法連結怎麼辦？','怎麼充電？','步數不同步怎麼辦？','如何關閉來電通知？','數據未上傳？'],
+  'fee':['轉帳帳號是什麼？','居家治療怎麼收費？','合約到期不續約怎麼退還？','退押金流程？','提早解約費用怎麼算？'],
+  'clinic':['如何判斷初診還是複診？','台北停車資訊？','台中停車資訊？','退押金流程？','需要轉諮詢師的項目？'],
+};
+let isLoading=false;
+function setCat(k,btn){
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const w=document.getElementById('suggWrap');
+  w.innerHTML=(SUGG[k]||[]).map(s=>`<button class="sugg" onclick="useSugg(this)">${s}</button>`).join('');
+}
+function useSugg(btn){document.getElementById('inputBox').value=btn.textContent;sendMessage();}
+function findRelated(q,a){
+  const c=(q+' '+a).toLowerCase();
+  return FAQ.filter(f=>c.includes(f.q.substring(0,10).toLowerCase())).slice(0,3);
+}
+async function sendMessage(){
+  const box=document.getElementById('inputBox');
+  const text=box.value.trim();
+  if(!text||isLoading)return;
+  document.getElementById('welcome').style.display='none';
+  addUser(text);box.value='';box.style.height='44px';
+  showTyping();isLoading=true;document.getElementById('sendBtn').disabled=true;
+  try{
+    const res=await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text})});
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const reply=await res.text();
+    hideTyping();addBot(reply,findRelated(text,reply));
+  }catch(e){hideTyping();addBot('抱歉，發生錯誤：'+e.message+'。請稍後再試，或直接聯繫診所同仁。');}
+  isLoading=false;document.getElementById('sendBtn').disabled=false;
+}
+function addUser(text){
+  const now=new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
+  const row=document.createElement('div');row.className='msg-row user';
+  row.innerHTML=`<span class="ts">${now}</span><div class="bubble user-b">${esc(text)}</div><div class="avatar user-av">我</div>`;
+  document.getElementById('chatWrap').appendChild(row);scroll();
+}
+function addBot(text,related=[]){
+  const now=new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
+  const fmt=esc(text).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+  const srcs=related.length?`<div class="srcs">${related.map(f=>`<span class="stag" title="${esc(f.q)}">${f.id}</span>`).join('')}</div>`:'';
+  const row=document.createElement('div');row.className='msg-row';
+  row.innerHTML=`<div class="avatar bot-av">AI</div><div class="bubble bot-b">${fmt}${srcs}</div><span class="ts">${now}</span>`;
+  document.getElementById('chatWrap').appendChild(row);scroll();
+}
+function showTyping(){
+  const el=document.createElement('div');el.className='msg-row';el.id='typing';
+  el.innerHTML='<div class="avatar bot-av">AI</div><div class="typing-b"><div class="td"></div><div class="td"></div><div class="td"></div></div>';
+  document.getElementById('chatWrap').appendChild(el);scroll();
+}
+function hideTyping(){document.getElementById('typing')?.remove();}
+function scroll(){const a=document.getElementById('chatArea');a.scrollTop=a.scrollHeight;}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
+function autoResize(el){el.style.height='44px';el.style.height=Math.min(el.scrollHeight,120)+'px';}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+</script>
+</body>
+</html>
