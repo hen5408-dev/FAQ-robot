@@ -230,7 +230,6 @@ function findRelated(q,a){
 function buildFAQText(){
   return FAQ.map(f=>`【${f.id}】${f.cat}\nQ：${f.q}\nA：${f.a}`).join('\n\n');
 }
-
 function buildSystemPrompt(){
   return `你是智平衡健康事業的 AI 客服助理「小智」，服務診所為「拉菲爾人本診所」（台北、桃園、新竹、台中、高雄）。
 
@@ -244,7 +243,6 @@ function buildSystemPrompt(){
 ## FAQ 知識庫（這是唯一的資料來源）：
 ${buildFAQText()}`;
 }
-
 async function sendMessage(){
   const box=document.getElementById('inputBox');
   const text=box.value.trim();
@@ -289,7 +287,6 @@ function scroll(){const a=document.getElementById('chatArea');a.scrollTop=a.scro
 function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
 function autoResize(el){el.style.height='44px';el.style.height=Math.min(el.scrollHeight,120)+'px';}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
 </script>
 </body>
 </html>
