@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>小智｜智平衡 AI 客服</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -14,9 +14,12 @@
   --t9:#1a1a18;--t7:#3d3d3a;--t6:#5f5e5a;--t4:#9c9a92;--t2:#e0dfdc;
   --shadow:0 1px 4px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.05);
   --font:'Noto Sans TC',sans-serif;--mono:'IBM Plex Mono',monospace;
+  --danger:#c0392b;--warn:#e67e22;
 }
 html,body{height:100%;overflow:hidden}
 body{font-family:var(--font);background:var(--bg);color:var(--t9);display:flex;flex-direction:column}
+
+/* ── HEADER ── */
 .hdr{background:linear-gradient(135deg,var(--g1) 0%,var(--g2) 60%,var(--g3) 100%);padding:0 20px;height:60px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(26,92,56,.3);flex-shrink:0}
 .hdr-logo{width:40px;height:40px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1.5px solid rgba(255,255,255,.35)}
 .hdr-logo svg{width:22px;height:22px;fill:#fff}
@@ -25,20 +28,37 @@ body{font-family:var(--font);background:var(--bg);color:var(--t9);display:flex;f
 .hdr-sub{font-size:11px;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:4px;margin-top:1px}
 .dot{width:6px;height:6px;border-radius:50%;background:#a8ff8a;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hdr-right{display:flex;align-items:center;gap:8px}
 .hdr-badge{background:rgba(255,255,255,.2);color:#fff;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.35);white-space:nowrap}
-#chatArea{flex:1;overflow-y:auto;padding:20px 0;scroll-behavior:smooth}
+.hdr-clear{background:rgba(255,255,255,.15);color:#fff;font-size:11px;padding:4px 10px;border-radius:16px;border:1px solid rgba(255,255,255,.25);cursor:pointer;white-space:nowrap;transition:.15s}
+.hdr-clear:hover{background:rgba(255,255,255,.28)}
+
+/* ── CATEGORY BAR（固定在 header 下方）── */
+#catBar{background:var(--white);border-bottom:1px solid var(--t2);padding:8px 16px;flex-shrink:0;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+#catBar::-webkit-scrollbar{display:none}
+.cat-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:20px;border:1.5px solid var(--gl);background:var(--white);color:var(--g1);font-family:var(--font);font-size:12px;font-weight:500;cursor:pointer;transition:.18s;white-space:nowrap}
+.cat-btn+.cat-btn{margin-left:6px}
+.cat-btn:hover,.cat-btn.active{background:var(--g3);border-color:var(--g3);color:#fff;box-shadow:0 2px 8px rgba(39,174,96,.3)}
+
+/* ── CHAT AREA ── */
+#chatArea{flex:1;overflow-y:auto;padding:16px 0 8px;scroll-behavior:smooth}
 #chatWrap{max-width:800px;width:100%;margin:0 auto;padding:0 16px;display:flex;flex-direction:column;gap:4px}
-#welcome{text-align:center;padding:24px 16px 20px}
-.welcome-icon{width:72px;height:72px;background:linear-gradient(135deg,var(--g2),var(--g4));border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(33,122,74,.3)}
-.welcome-icon svg{width:36px;height:36px;fill:#fff}
-.welcome-title{font-size:19px;font-weight:700;color:var(--g1);margin-bottom:6px}
-.welcome-sub{font-size:13px;line-height:1.9;color:var(--t6);margin-bottom:22px}
-.cat-wrap{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px}
-.cat-btn{padding:8px 18px;border-radius:22px;border:1.5px solid var(--gl);background:var(--white);color:var(--g1);font-family:var(--font);font-size:12px;font-weight:500;cursor:pointer;transition:.18s}
-.cat-btn:hover,.cat-btn.active{background:var(--g3);border-color:var(--g3);color:#fff;box-shadow:0 2px 8px rgba(39,174,96,.35)}
-.sugg-wrap{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
-.sugg{padding:8px 14px;border-radius:8px;border:1px solid var(--t2);background:var(--white);color:var(--t7);font-family:var(--font);font-size:12px;cursor:pointer;transition:.15s;text-align:left}
-.sugg:hover{border-color:var(--g3);color:var(--g1);background:var(--gp)}
+
+/* ── WELCOME ── */
+#welcome{text-align:center;padding:20px 16px 16px}
+.welcome-icon{width:64px;height:64px;background:linear-gradient(135deg,var(--g2),var(--g4));border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(33,122,74,.3)}
+.welcome-icon svg{width:32px;height:32px;fill:#fff}
+.welcome-title{font-size:18px;font-weight:700;color:var(--g1);margin-bottom:4px}
+.welcome-sub{font-size:13px;line-height:1.8;color:var(--t6);margin-bottom:16px}
+
+/* ── AI 引導訊息 ── */
+.guide-bubble{background:var(--white);border:1px solid var(--t2);border-radius:16px;border-bottom-left-radius:4px;padding:12px 16px;font-size:14px;line-height:1.8;color:var(--t9);box-shadow:var(--shadow);margin-bottom:10px;animation:msgIn .22s ease}
+.guide-bubble strong{color:var(--g1)}
+.sugg-wrap{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.sugg{padding:8px 14px;border-radius:20px;border:1.5px solid var(--gl);background:var(--white);color:var(--g1);font-family:var(--font);font-size:12px;font-weight:500;cursor:pointer;transition:.15s;text-align:left}
+.sugg:hover{background:var(--g3);border-color:var(--g3);color:#fff}
+
+/* ── MESSAGES ── */
 .msg-row{display:flex;gap:9px;align-items:flex-end;margin-bottom:10px;animation:msgIn .22s ease}
 @keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .msg-row.user{flex-direction:row-reverse}
@@ -48,62 +68,114 @@ body{font-family:var(--font);background:var(--bg);color:var(--t9);display:flex;f
 .bubble{max-width:75%;padding:12px 16px;border-radius:18px;font-size:14px;line-height:1.85;word-break:break-word}
 .bot-b{background:var(--white);border:1px solid var(--t2);border-bottom-left-radius:4px;box-shadow:var(--shadow);color:var(--t9)}
 .user-b{background:linear-gradient(135deg,var(--g2),var(--g3));color:#fff;border-bottom-right-radius:4px;box-shadow:0 2px 8px rgba(33,122,74,.25)}
-.ts{font-size:10px;color:var(--t4);font-family:var(--mono);padding:0 3px;flex-shrink:0}
-.typing-b{background:var(--white);border:1px solid var(--t2);border-radius:18px;border-bottom-left-radius:4px;padding:14px 18px;box-shadow:var(--shadow);display:flex;gap:5px;align-items:center}
-.td{width:7px;height:7px;border-radius:50%;background:var(--gl);animation:bounce .8s infinite}
+.ts{font-size:10px;color:var(--t4);font-family:var(--mono);padding:0 3px;flex-shrink:0;align-self:flex-end;margin-bottom:2px}
+
+/* ── 回答動作列 ── */
+.msg-actions{display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap}
+.copy-btn{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--t4);background:none;border:1px solid var(--t2);border-radius:6px;padding:3px 8px;cursor:pointer;font-family:var(--font);transition:.15s}
+.copy-btn:hover{color:var(--g2);border-color:var(--gl);background:var(--gp)}
+.copy-btn.copied{color:var(--g2);border-color:var(--gl)}
+.rate-btn{font-size:14px;background:none;border:none;cursor:pointer;opacity:.45;transition:.15s;padding:2px 4px;border-radius:4px}
+.rate-btn:hover{opacity:1;background:var(--gp)}
+.rate-btn.active{opacity:1}
+
+/* ── TYPING（俏皮）── */
+.typing-wrap{display:flex;gap:9px;align-items:flex-end;margin-bottom:10px}
+.typing-b{background:var(--white);border:1px solid var(--t2);border-radius:18px;border-bottom-left-radius:4px;padding:12px 16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:8px;font-size:13px;color:var(--t6)}
+.typing-dots{display:flex;gap:4px}
+.td{width:6px;height:6px;border-radius:50%;background:var(--gl);animation:bounce .8s infinite}
 .td:nth-child(2){animation-delay:.15s}.td:nth-child(3){animation-delay:.3s}
-@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-7px)}}
-.srcs{margin-top:8px;display:flex;flex-wrap:wrap;gap:5px}
-.stag{font-size:11px;background:var(--gp);color:var(--g1);padding:2px 8px;border-radius:4px;font-family:var(--mono);border:1px solid var(--gl)}
-.input-bar{background:var(--white);border-top:1px solid var(--t2);padding:12px 16px;flex-shrink:0}
-.input-inner{max-width:800px;margin:0 auto;display:flex;gap:10px;align-items:flex-end}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+
+/* ── INPUT BAR ── */
+.input-bar{background:var(--white);border-top:1px solid var(--t2);padding:10px 16px 12px;flex-shrink:0;padding-bottom:max(12px,env(safe-area-inset-bottom))}
+.input-inner{max-width:800px;margin:0 auto;display:flex;gap:8px;align-items:flex-end}
 #inputBox{flex:1;padding:11px 14px;border:1.5px solid var(--t2);border-radius:12px;font-family:var(--font);font-size:14px;color:var(--t9);background:var(--bg);resize:none;outline:none;line-height:1.5;min-height:44px;max-height:120px;transition:border-color .15s}
 #inputBox:focus{border-color:var(--g3);background:var(--white)}
 #inputBox::placeholder{color:var(--t4)}
+.btn-group{display:flex;gap:6px;flex-shrink:0}
+#voiceBtn{width:44px;height:44px;border-radius:12px;background:var(--gp);border:1.5px solid var(--gl);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s}
+#voiceBtn:hover{background:var(--gl)}
+#voiceBtn.recording{background:#fee;border-color:#f5b7b1;animation:recordPulse 1s infinite}
+@keyframes recordPulse{0%,100%{box-shadow:0 0 0 0 rgba(231,76,60,.3)}50%{box-shadow:0 0 0 6px rgba(231,76,60,0)}}
+#voiceBtn svg{width:18px;height:18px;fill:var(--g2)}
+#voiceBtn.recording svg{fill:#c0392b}
 #sendBtn{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--g2),var(--g3));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s}
 #sendBtn:hover{background:linear-gradient(135deg,var(--g1),var(--g2));box-shadow:0 2px 8px rgba(33,122,74,.4)}
 #sendBtn:disabled{background:var(--t2);cursor:not-allowed;box-shadow:none}
 #sendBtn svg{width:18px;height:18px;fill:#fff}
 .hint{font-size:11px;color:var(--t4);text-align:center;margin-top:6px;max-width:800px;margin-left:auto;margin-right:auto}
+
+/* ── 逾時提示 ── */
+.timeout-msg{font-size:13px;color:var(--warn);display:flex;align-items:center;gap:6px;margin-top:4px;max-width:800px;margin-left:auto;margin-right:auto}
+
+/* ── 步驟格式 ── */
+.step-list{list-style:none;padding:0;margin:8px 0 0}
+.step-list li{display:flex;gap:8px;padding:4px 0;line-height:1.7}
+.step-list li .sn{min-width:20px;height:20px;border-radius:50%;background:var(--gp);border:1px solid var(--gl);color:var(--g1);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+
+/* ── SCROLLBAR ── */
 #chatArea::-webkit-scrollbar{width:5px}
 #chatArea::-webkit-scrollbar-track{background:transparent}
 #chatArea::-webkit-scrollbar-thumb{background:var(--gl);border-radius:3px}
-@media(max-width:500px){.hdr-badge{display:none}.bubble{max-width:86%}}
+
+/* ── RWD ── */
+@media(max-width:500px){
+  .hdr-badge{display:none}
+  .bubble{max-width:88%}
+  .hdr-clear{font-size:10px;padding:3px 8px}
+}
 </style>
 </head>
 <body>
+
+<!-- HEADER -->
 <header class="hdr">
   <div class="hdr-logo"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg></div>
   <div class="hdr-info">
     <div class="hdr-name">小智｜智平衡 AI 客服</div>
     <div class="hdr-sub"><span class="dot"></span>線上服務中</div>
   </div>
-  <div class="hdr-badge">智平衡健康集團－創新研發處</div>
+  <div class="hdr-right">
+    <button class="hdr-clear" onclick="clearChat()" title="清空對話">🗑 清空</button>
+    <div class="hdr-badge">智平衡健康集團－創新研發處</div>
+  </div>
 </header>
+
+<!-- 分類 BAR（固定常駐）-->
+<div id="catBar">
+  <button class="cat-btn" onclick="setCat('6th',this)">🔴 第六代紅光</button>
+  <button class="cat-btn" onclick="setCat('home',this)">🏠 居家治療儀</button>
+  <button class="cat-btn" onclick="setCat('ring',this)">💍 Acer 指環</button>
+  <button class="cat-btn" onclick="setCat('asus',this)">⌚ 華碩手錶</button>
+  <button class="cat-btn" onclick="setCat('garmin',this)">🟢 Garmin 手環</button>
+  <button class="cat-btn" onclick="setCat('fee',this)">💳 費用／合約</button>
+  <button class="cat-btn" onclick="setCat('clinic',this)">🏥 診所／客服</button>
+</div>
+
+<!-- 聊天區 -->
 <div id="chatArea"><div id="chatWrap">
   <div id="welcome">
     <div class="welcome-icon"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg></div>
     <div class="welcome-title">您好！我是小智 👋</div>
-    <div class="welcome-sub">智平衡健康事業 AI 助理<br>請選擇產品類別，或直接輸入您的問題</div>
-    <div class="cat-wrap">
-      <button class="cat-btn" onclick="setCat('6th',this)">🔴 第六代紅光極智衣</button>
-      <button class="cat-btn" onclick="setCat('home',this)">🏠 居家治療儀</button>
-      <button class="cat-btn" onclick="setCat('ring',this)">💍 Acer 指環</button>
-      <button class="cat-btn" onclick="setCat('asus',this)">⌚ 華碩手錶</button>
-      <button class="cat-btn" onclick="setCat('garmin',this)">🟢 Garmin 手環</button>
-      <button class="cat-btn" onclick="setCat('fee',this)">💳 費用 / 合約</button>
-      <button class="cat-btn" onclick="setCat('clinic',this)">🏥 診所 / 客服</button>
-    </div>
-    <div class="sugg-wrap" id="suggWrap"></div>
+    <div class="welcome-sub">請先點選上方的產品分類<br>我會引導您找到需要的答案</div>
   </div>
 </div></div>
+
+<!-- INPUT BAR -->
 <div class="input-bar">
   <div class="input-inner">
-    <textarea id="inputBox" placeholder="輸入您的問題…" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-    <button id="sendBtn" onclick="sendMessage()"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+    <textarea id="inputBox" placeholder="輸入您的問題，或點選上方分類…" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    <div class="btn-group">
+      <button id="voiceBtn" onclick="toggleVoice()" title="語音輸入">
+        <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zm-1 19.93V22h2v-1.07A8 8 0 0 0 20 13h-2a6 6 0 0 1-12 0H4a8 8 0 0 0 7 7.93z"/></svg>
+      </button>
+      <button id="sendBtn" onclick="sendMessage()"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+    </div>
   </div>
-  <div class="hint">由 AI 自動回覆，重要事項請聯繫診所同仁確認</div>
+  <div class="hint" id="hintBar">由 AI 自動回覆，重要事項請聯繫診所同仁確認</div>
 </div>
+
 <script>
 const FAQ=[
 
@@ -333,27 +405,328 @@ const FAQ=[
 ];
 
 const WEBHOOK='https://adamyu.app.n8n.cloud/webhook/faq-chat';
-const SUGG={
-  '6th':['極智衣怎麼穿？','一天可以穿幾次？','極智衣怎麼洗？','黃燈/紅燈閃爍是什麼情況？','治療中可以中斷嗎？','充電注意事項？'],
-  'home':['三合一密碼版怎麼操作？','NC108怎麼操作？','治療衣能自己洗嗎？','治療時刺痛怎麼辦？','水凝膠不夠怎麼辦？','一天可以治療兩次嗎？'],
-  'ring':['指環有哪些功能？','電池可以用多久？','防水嗎？','藍芽斷線或無法配對？','數據上傳不完整？','睡眠資料遺失？','某段HRV資料缺失？'],
-  'asus':['VivoWatch 6有哪些功能？','怎麼充電？','對應哪個App？','防水嗎？','強制重啟怎麼做？','一卡通怎麼用？'],
-  'garmin':['Garmin怎麼配對手機？','無法連結怎麼辦？','怎麼充電？','步數不同步怎麼辦？','如何關閉來電通知？','數據未上傳？'],
-  'fee':['第六代轉帳帳號是什麼？','居家治療怎麼收費？','合約到期不續約怎麼退還？','退押金流程？','提早解約費用怎麼算？'],
-  'clinic':['如何判斷初診還是複診？','台北停車資訊？','台中停車資訊？','退押金流程？','需要轉諮詢師的項目？'],
+const TIMEOUT_MS = 15000;
+
+// ── 俏皮等待語 ──
+const THINKING_MSGS = [
+  '小智想想看喔～',
+  '讓我查一下資料 📋',
+  '稍等一下，小智翻翻手冊…',
+  '嗯嗯，這個問題…🤔',
+  '小智認真找答案中！',
+  '讓我想想怎麼回答你～',
+  '翻翻 FAQ，馬上來！',
+  '好問題，小智整理一下💡',
+];
+
+// ── AI 引導對話腳本 ──
+const CAT_GUIDE = {
+  '6th': {
+    emoji:'🔴',
+    label:'第六代紅光極智衣',
+    intro:'已切換到【第六代紅光極智衣】\n請問您想了解哪方面的問題呢？',
+    groups:[
+      { title:'穿戴使用', items:['極智衣怎麼穿才對？','什麼時候穿比較好？','一天可以做幾次治療？','治療中可以中斷嗎？'] },
+      { title:'清潔保養', items:['極智衣怎麼洗？','洗後會不會影響效果？'] },
+      { title:'充電問題', items:['充電注意事項？','充電失敗怎麼辦？','出國電壓不同會無法充電嗎？'] },
+      { title:'燈號 & 操作', items:['燈號說明？','紅光控制器怎麼操作？','怎麼知道控制器有正常運作？'] },
+      { title:'突發狀況', items:['穿了以後會頭暈心跳加快？','皮膚很癢沒辦法穿？','儀器接頭接觸不良？','開機後直接關機？'] },
+    ]
+  },
+  'home': {
+    emoji:'🏠',
+    label:'居家治療儀',
+    intro:'已切換到【居家治療儀】\n請問您想了解哪方面？',
+    groups:[
+      { title:'費用 & 合約', items:['居家治療怎麼收費？','居家匯款帳號是什麼？','可以請假嗎？'] },
+      { title:'治療衣', items:['治療衣能自己洗嗎？','治療衣能穿多久？','裡面能穿內衣嗎？','治療衣穿法步驟？'] },
+      { title:'儀器操作', items:['三合一定時版怎麼操作？','三合一密碼版怎麼操作？','NC108儀器怎麼操作？'] },
+      { title:'療效 & 突發', items:['一天可以治療兩次嗎？','治療時刺痛怎麼辦？','水凝膠不夠怎麼辦？'] },
+    ]
+  },
+  'ring': {
+    emoji:'💍',
+    label:'Acer 指環',
+    intro:'已切換到【Acer 指環】\n請問您想了解什麼？',
+    groups:[
+      { title:'基本功能', items:['Acer指環有哪些健康追蹤功能？','要戴在哪個手指？','可以戴著睡覺嗎？','防水嗎？'] },
+      { title:'電量 & 充電', items:['電池可以用多久？','Acer指環怎麼充電？','充電異常怎麼辦？'] },
+      { title:'數據問題', items:['指環及手錶數據上傳不完整？','某段HRV或資料缺失？','睡眠資料遺失？','指環無法連線需放回充電座？'] },
+      { title:'其他', items:['藍芽斷線或無法配對？','Acer指環怎麼清潔？','保固內容為何？'] },
+    ]
+  },
+  'asus': {
+    emoji:'⌚',
+    label:'華碩手錶',
+    intro:'已切換到【華碩 VivoWatch 6】\n請問您想了解什麼？',
+    groups:[
+      { title:'基本操作', items:['VivoWatch 6有哪些功能？','怎麼充電？','對應哪個App？','怎麼配對？','防水嗎？'] },
+      { title:'進階功能', items:['強制重新啟動怎麼做？','怎麼更新韌體？','如何量血壓/壓力？','身體組成分析怎麼做？','一卡通iPASS怎麼用？'] },
+    ]
+  },
+  'garmin': {
+    emoji:'🟢',
+    label:'Garmin 手環',
+    intro:'已切換到【Garmin 手環】\n請問您想了解什麼？',
+    groups:[
+      { title:'配對 & 連線', items:['Garmin手環怎麼配對手機？','手機無法連結怎麼辦？','心率數據不穩或未出現？'] },
+      { title:'使用問題', items:['怎麼充電？','怎麼重置？','步數和帳戶不同步？','如何關閉來電通知？','數據未上傳？'] },
+    ]
+  },
+  'fee': {
+    emoji:'💳',
+    label:'費用／合約',
+    intro:'已切換到【費用 & 合約】\n請問您想了解什麼？',
+    groups:[
+      { title:'第六代費用', items:['第六代轉帳帳號是什麼？','為什麼只能租不能買？','請問是開發票還是收據？'] },
+      { title:'合約問題', items:['合約到期不續約怎麼退還保健衣？','合約結束了想退押金？','提早解約費用怎麼算？','想轉其他方案？'] },
+      { title:'居家費用', items:['居家治療怎麼收費？','居家匯款帳號是什麼？'] },
+    ]
+  },
+  'clinic': {
+    emoji:'🏥',
+    label:'診所／客服',
+    intro:'已切換到【診所 & 客服流程】\n請問您想了解什麼？',
+    groups:[
+      { title:'客服流程', items:['如何判斷初診還是複診？','患者症狀回報怎麼處理？','需要直接轉諮詢師的項目？','退押金流程是什麼？'] },
+      { title:'停車資訊', items:['台北診所停車資訊？','桃園診所停車資訊？','新竹診所停車資訊？','台中診所停車資訊？','高雄診所停車資訊？'] },
+      { title:'其他', items:['為什麼不能開醫療收據或三聯式發票？','患者對治療點位有疑慮怎麼回覆？'] },
+    ]
+  },
 };
-let isLoading=false;
-function setCat(k,btn){
+
+let isLoading = false;
+let recognition = null;
+let isRecording = false;
+let timeoutTimer = null;
+let currentCat = null;
+
+// ── 清空對話 ──
+function clearChat(){
+  if(!confirm('確定要清空對話紀錄嗎？'))return;
+  const wrap = document.getElementById('chatWrap');
+  wrap.innerHTML = `<div id="welcome">
+    <div class="welcome-icon"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg></div>
+    <div class="welcome-title">您好！我是小智 👋</div>
+    <div class="welcome-sub">請先點選上方的產品分類<br>我會引導您找到需要的答案</div>
+  </div>`;
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  currentCat = null;
+  isLoading = false;
+  document.getElementById('sendBtn').disabled = false;
+  document.getElementById('hintBar').textContent = '由 AI 自動回覆，重要事項請聯繫診所同仁確認';
+  document.getElementById('hintBar').style.color = '';
+}
+
+// ── 分類選擇（AI 引導流程）──
+function setCat(key, btn){
   document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  const w=document.getElementById('suggWrap');
-  w.innerHTML=(SUGG[k]||[]).map(s=>`<button class="sugg" onclick="useSugg(this)">${s}</button>`).join('');
+  currentCat = key;
+
+  // 隱藏 welcome
+  const welcome = document.getElementById('welcome');
+  if(welcome) welcome.style.display = 'none';
+
+  const cfg = CAT_GUIDE[key];
+  if(!cfg) return;
+
+  // 加入 AI 引導訊息
+  const wrap = document.getElementById('chatWrap');
+  const guideEl = document.createElement('div');
+  guideEl.className = 'msg-row';
+
+  // 組建分組按鈕
+  let groupsHTML = '';
+  cfg.groups.forEach(g => {
+    groupsHTML += `<div style="margin-top:10px;"><div style="font-size:11px;color:var(--t4);margin-bottom:5px;font-weight:600;">${g.title}</div>`;
+    groupsHTML += `<div class="sugg-wrap">`;
+    g.items.forEach(item => {
+      groupsHTML += `<button class="sugg" onclick="useSugg(this)">${item}</button>`;
+    });
+    groupsHTML += `</div></div>`;
+  });
+
+  const introLines = cfg.intro.split('\n').join('<br>');
+  guideEl.innerHTML = `
+    <div class="avatar bot-av">AI</div>
+    <div style="max-width:82%">
+      <div class="guide-bubble">
+        <strong>${cfg.emoji} ${introLines}</strong>
+        ${groupsHTML}
+        <div style="margin-top:12px;font-size:12px;color:var(--t4);">或直接在下方輸入問題 ✍️</div>
+      </div>
+    </div>`;
+  wrap.appendChild(guideEl);
+  scroll();
 }
-function useSugg(btn){document.getElementById('inputBox').value=btn.textContent;sendMessage();}
-function findRelated(q,a){
-  const c=(q+' '+a).toLowerCase();
-  return FAQ.filter(f=>c.includes(f.q.substring(0,8).toLowerCase())).slice(0,3);
+
+function useSugg(btn){
+  document.getElementById('inputBox').value = btn.textContent;
+  sendMessage();
 }
+
+// ── 格式化回答（步驟縮排）──
+function formatReply(text){
+  const escaped = esc(text);
+  // 偵測數字清單格式 "1. xxx\n2. yyy" → 包成 step-list
+  if(/^\d+\.\s/.test(text.trim())){
+    const lines = escaped.split(/\n/);
+    let html = '';
+    let inList = false;
+    lines.forEach(line => {
+      const m = line.match(/^(\d+)\.\s+(.*)/);
+      if(m){
+        if(!inList){ html += '<ol class="step-list">'; inList = true; }
+        html += `<li><span class="sn">${m[1]}</span><span>${m[2]}</span></li>`;
+      } else {
+        if(inList){ html += '</ol>'; inList = false; }
+        if(line.trim()) html += `<p style="margin:4px 0">${line}</p>`;
+      }
+    });
+    if(inList) html += '</ol>';
+    return html;
+  }
+  // 一般格式
+  return escaped
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/・/g,'<span style="color:var(--g2);margin-right:2px">・</span>')
+    .replace(/\n/g,'<br>');
+}
+
+// ── 俏皮等待訊息 ──
+function randomThinking(){
+  return THINKING_MSGS[Math.floor(Math.random() * THINKING_MSGS.length)];
+}
+
+// ── 傳送訊息 ──
+async function sendMessage(){
+  const box = document.getElementById('inputBox');
+  const text = box.value.trim();
+  if(!text || isLoading) return;
+
+  const welcome = document.getElementById('welcome');
+  if(welcome) welcome.style.display = 'none';
+
+  addUser(text);
+  box.value = '';
+  box.style.height = '44px';
+  showTyping();
+  isLoading = true;
+  document.getElementById('sendBtn').disabled = true;
+  document.getElementById('hintBar').textContent = '由 AI 自動回覆，重要事項請聯繫診所同仁確認';
+  document.getElementById('hintBar').style.color = '';
+
+  // 15 秒逾時提示
+  timeoutTimer = setTimeout(() => {
+    document.getElementById('hintBar').textContent = '⚠️ 回應較慢，請稍候或重新提問…';
+    document.getElementById('hintBar').style.color = 'var(--warn)';
+  }, 15000);
+
+  try{
+    const ctrl = new AbortController();
+    const killTimer = setTimeout(() => ctrl.abort(), 30000);
+    const payload = {
+      message: text,
+      systemPrompt: buildSystemPrompt(),
+      faqData: FAQ.map(f=>({id:f.id,cat:f.cat,q:f.q,a:f.a}))
+    };
+    const res = await fetch(WEBHOOK, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload),
+      signal: ctrl.signal
+    });
+    clearTimeout(killTimer);
+    clearTimeout(timeoutTimer);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const reply = await res.text();
+    hideTyping();
+    addBot(reply);
+  } catch(e){
+    clearTimeout(timeoutTimer);
+    hideTyping();
+    const msg = e.name === 'AbortError'
+      ? '⏱ 回應逾時，請稍後再試，或直接聯繫診所同仁。'
+      : '⚠️ 發生錯誤：' + e.message + '。請稍後再試或聯繫同仁。';
+    addBot(msg, true);
+  }
+  isLoading = false;
+  document.getElementById('sendBtn').disabled = false;
+  document.getElementById('hintBar').textContent = '由 AI 自動回覆，重要事項請聯繫診所同仁確認';
+  document.getElementById('hintBar').style.color = '';
+}
+
+function addUser(text){
+  const now = new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
+  const row = document.createElement('div');
+  row.className = 'msg-row user';
+  row.innerHTML = `<span class="ts">${now}</span><div class="bubble user-b">${esc(text)}</div><div class="avatar user-av">我</div>`;
+  document.getElementById('chatWrap').appendChild(row);
+  scroll();
+}
+
+function addBot(text, isError=false){
+  const now = new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
+  const fmt = isError ? `<span style="color:var(--warn)">${esc(text)}</span>` : formatReply(text);
+
+  // 複製按鈕 & 評分按鈕
+  const rawText = text;
+  const actionsHTML = isError ? '' : `
+    <div class="msg-actions">
+      <button class="copy-btn" onclick="copyText(this,'${encodeURIComponent(rawText)}')">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+        複製回答
+      </button>
+      <button class="rate-btn" onclick="rate(this,'good')" title="有幫助">👍</button>
+      <button class="rate-btn" onclick="rate(this,'bad')" title="沒幫助">👎</button>
+    </div>`;
+
+  const row = document.createElement('div');
+  row.className = 'msg-row';
+  row.innerHTML = `<div class="avatar bot-av">AI</div><div class="bubble bot-b">${fmt}${actionsHTML}</div><span class="ts">${now}</span>`;
+  document.getElementById('chatWrap').appendChild(row);
+  scroll();
+}
+
+function copyText(btn, encodedText){
+  const text = decodeURIComponent(encodedText);
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent = '✓ 已複製';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg> 複製回答'; btn.classList.remove('copied'); }, 2000);
+  }).catch(()=>{ btn.textContent = '請手動複製'; });
+}
+
+function rate(btn, type){
+  const parent = btn.parentElement;
+  parent.querySelectorAll('.rate-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  // 簡單回饋提示（可串接後端）
+  if(type==='bad'){
+    const hint = document.createElement('span');
+    hint.style.cssText = 'font-size:11px;color:var(--t4);margin-left:4px';
+    hint.textContent = '感謝回饋，小智會繼續進步！';
+    parent.appendChild(hint);
+  }
+}
+
+function showTyping(){
+  const el = document.createElement('div');
+  el.className = 'typing-wrap';
+  el.id = 'typing';
+  const msg = randomThinking();
+  el.innerHTML = `<div class="avatar bot-av">AI</div><div class="typing-b"><span style="font-size:13px">${msg}</span><div class="typing-dots"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>`;
+  document.getElementById('chatWrap').appendChild(el);
+  scroll();
+}
+function hideTyping(){ document.getElementById('typing')?.remove(); }
+function scroll(){ const a=document.getElementById('chatArea'); a.scrollTop=a.scrollHeight; }
+function handleKey(e){ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();} }
+function autoResize(el){ el.style.height='44px'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
+function esc(s){ return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── 系統 Prompt ──
 function buildFAQText(){
   return FAQ.map(f=>`【${f.id}】${f.cat}\nQ：${f.q}\nA：${f.a}`).join('\n\n');
 }
@@ -370,50 +743,45 @@ function buildSystemPrompt(){
 ## FAQ 知識庫（這是唯一的資料來源）：
 ${buildFAQText()}`;
 }
-async function sendMessage(){
-  const box=document.getElementById('inputBox');
-  const text=box.value.trim();
-  if(!text||isLoading)return;
-  document.getElementById('welcome').style.display='none';
-  addUser(text);box.value='';box.style.height='44px';
-  showTyping();isLoading=true;document.getElementById('sendBtn').disabled=true;
-  try{
-    const payload={
-      message:text,
-      systemPrompt:buildSystemPrompt(),
-      faqData:FAQ.map(f=>({id:f.id,cat:f.cat,q:f.q,a:f.a}))
-    };
-    const res=await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    if(!res.ok)throw new Error('HTTP '+res.status);
-    const reply=await res.text();
-    hideTyping();addBot(reply,findRelated(text,reply));
-  }catch(e){hideTyping();addBot('抱歉，發生錯誤：'+e.message+'。請稍後再試，或直接聯繫診所同仁。');}
-  isLoading=false;document.getElementById('sendBtn').disabled=false;
+
+// ── 語音輸入 ──
+function toggleVoice(){
+  const btn = document.getElementById('voiceBtn');
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SpeechRecognition){
+    alert('您的瀏覽器不支援語音輸入，建議使用 Chrome 或 Edge。');
+    return;
+  }
+  if(isRecording){
+    recognition?.stop();
+    return;
+  }
+  recognition = new SpeechRecognition();
+  recognition.lang = 'zh-TW';
+  recognition.continuous = false;
+  recognition.interimResults = true;
+  recognition.onstart = () => {
+    isRecording = true;
+    btn.classList.add('recording');
+    document.getElementById('inputBox').placeholder = '🎙 聆聽中，請說話…';
+  };
+  recognition.onresult = (e) => {
+    const transcript = Array.from(e.results).map(r=>r[0].transcript).join('');
+    document.getElementById('inputBox').value = transcript;
+    autoResize(document.getElementById('inputBox'));
+  };
+  recognition.onend = () => {
+    isRecording = false;
+    btn.classList.remove('recording');
+    document.getElementById('inputBox').placeholder = '輸入您的問題，或點選上方分類…';
+  };
+  recognition.onerror = (e) => {
+    isRecording = false;
+    btn.classList.remove('recording');
+    document.getElementById('inputBox').placeholder = '輸入您的問題，或點選上方分類…';
+  };
+  recognition.start();
 }
-function addUser(text){
-  const now=new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
-  const row=document.createElement('div');row.className='msg-row user';
-  row.innerHTML=`<span class="ts">${now}</span><div class="bubble user-b">${esc(text)}</div><div class="avatar user-av">我</div>`;
-  document.getElementById('chatWrap').appendChild(row);scroll();
-}
-function addBot(text,related=[]){
-  const now=new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
-  const fmt=esc(text).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
-  const srcs=related.length?`<div class="srcs">${related.map(f=>`<span class="stag" title="${esc(f.q)}">${f.id}</span>`).join('')}</div>`:'';
-  const row=document.createElement('div');row.className='msg-row';
-  row.innerHTML=`<div class="avatar bot-av">AI</div><div class="bubble bot-b">${fmt}${srcs}</div><span class="ts">${now}</span>`;
-  document.getElementById('chatWrap').appendChild(row);scroll();
-}
-function showTyping(){
-  const el=document.createElement('div');el.className='msg-row';el.id='typing';
-  el.innerHTML='<div class="avatar bot-av">AI</div><div class="typing-b"><div class="td"></div><div class="td"></div><div class="td"></div></div>';
-  document.getElementById('chatWrap').appendChild(el);scroll();
-}
-function hideTyping(){document.getElementById('typing')?.remove();}
-function scroll(){const a=document.getElementById('chatArea');a.scrollTop=a.scrollHeight;}
-function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
-function autoResize(el){el.style.height='44px';el.style.height=Math.min(el.scrollHeight,120)+'px';}
-function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 </script>
 </body>
 </html>
