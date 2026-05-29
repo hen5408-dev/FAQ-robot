@@ -408,6 +408,7 @@ function clearChat(){
     <div class="welcome-sub">智平衡健康事業 AI 助理<br>請選擇產品類別，或直接輸入您的問題</div>
   </div>`;
   document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  chatHistory.length = 0;
   isLoading = false;
   document.getElementById('sendBtn').disabled = false;
   document.getElementById('hintBar').textContent = '由 AI 自動回覆，重要事項請聯繫診所同仁確認';
@@ -474,7 +475,11 @@ function buildSystemPrompt(){
 本工具供診所內部同仁使用，回答內容以「建議同仁如何處理」為主要方向。
 
 ## 回答規則（必須嚴格遵守）：
-1. 【先確認裝置再回答】當問題涉及穿戴裝置（手錶/指環/手環）但未指明是哪一種時，必須先反問：「請問是哪種裝置？（Acer 指環 / 華碩手錶 / Garmin 手環）」，確認後再查找對應 FAQ 回答。
+1. 【裝置辨識規則】
+   - 問題中出現「指環」→ 直接視為 Acer 指環，查 F1.x 相關 FAQ，不需要再問。
+   - 問題中出現「手錶」→ 直接視為華碩手錶，查 F1.x 相關 FAQ，不需要再問。
+   - 問題中出現「手環」→ 直接視為 Garmin 手環，查 F1.17~F1.18 相關 FAQ，不需要再問。
+   - 只有問題完全沒有提到任何裝置名稱，且無法從上下文判斷時，才反問：「請問是哪種裝置？（Acer 指環 / 華碩手錶 / Garmin 手環）」
 2. 【以 FAQ 資料為唯一依據】只能從下方 FAQ 知識庫找答案，不可自行補充、推測或整合多筆 FAQ 的內容。
 3. 【找到對應 FAQ 後，照答案回覆】將 FAQ 的答案內容完整呈現給同仁，可調整語氣但絕對不可增加、補充或推測 FAQ 以外的任何步驟、說明或建議。
 4. 【找不到答案時】只回覆：「這個問題目前 FAQ 尚未收錄，建議直接詢問創新研發處，將會有專人協助處理。」
@@ -482,13 +487,13 @@ function buildSystemPrompt(){
 6. 【步驟清楚】有操作步驟的回答，用數字條列呈現。
 7. 使用繁體中文，語氣親切、簡潔專業。
 
-## 需要先確認裝置的關鍵字：
-當問題出現以下關鍵字且未指明裝置時，先反問裝置類型：
-・數據、同步、連線、配對、藍芽、App、睡眠資料、心率、HRV
-
 ## FAQ 知識庫：
 ${buildFAQText()}`;
 }
+
+// ── 對話歷史 ──
+const chatHistory = [];
+
 async function sendMessage(){
   const box=document.getElementById('inputBox');
   const text=box.value.trim();
@@ -496,17 +501,27 @@ async function sendMessage(){
   document.getElementById('welcome').style.display='none';
   addUser(text);box.value='';box.style.height='44px';
   showTyping();isLoading=true;document.getElementById('sendBtn').disabled=true;
+
+  // 加入使用者訊息到歷史
+  chatHistory.push({role:'user', content: text});
+
   try{
     const payload={
-      message:text,
-      systemPrompt:buildSystemPrompt(),
-      faqData:FAQ.map(f=>({id:f.id,cat:f.cat,q:f.q,a:f.a}))
+      message: text,
+      history: chatHistory.slice(-10), // 最近 10 輪對話
+      systemPrompt: buildSystemPrompt(),
+      faqData: FAQ.map(f=>({id:f.id,cat:f.cat,q:f.q,a:f.a}))
     };
     const res=await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     if(!res.ok)throw new Error('HTTP '+res.status);
     const reply=await res.text();
-    hideTyping();addBot(reply,findRelated(text,reply));logQuestion(text,reply);
-  }catch(e){hideTyping();addBot('抱歉，發生錯誤：'+e.message+'。請稍後再試，或直接聯繫診所同仁。');}
+    // 加入 AI 回覆到歷史
+    chatHistory.push({role:'assistant', content: reply});
+    hideTyping();addBot(reply);logQuestion(text,reply);
+  }catch(e){
+    chatHistory.pop(); // 失敗時移除剛才加入的使用者訊息
+    hideTyping();addBot('抱歉，發生錯誤：'+e.message+'。請稍後再試，或直接聯繫診所同仁。');
+  }
   isLoading=false;document.getElementById('sendBtn').disabled=false;
 }
 function addUser(text){
