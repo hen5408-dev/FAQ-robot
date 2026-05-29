@@ -210,7 +210,7 @@ const FAQ=[
 // F. 穿戴裝置問題（手錶、指環）
 // ══════════════════════════════════════════
 {id:"F1.1",cat:"F.穿戴裝置",q:"超過保固期，遇到無法正常使用的情況",a:"合約期間，非人為蓄意破壞，請寄回公司，我們將承擔修復的費用。"},
-{id:"F1.2",cat:"F.穿戴裝置",q:"數據無法正常更新",a:"請先確認是哪種裝置：\nAcer 指環 → 請查看 F1.9（指環數據上傳不完整）\n華碩手錶 → 請查看 F1.24（手錶資料未同步至後台）\nGarmin 手環 → 請查看 F1.17（Garmin 數據未上傳）\n\n通用初步排解（適用所有裝置）：\n1. 確認裝置電量充足（建議30%以上）\n2. 確認手機藍牙已開啟\n3. 關閉手機藍牙 → 等待約10秒 → 重新開啟\n4. 將裝置靠近手機（建議30公分內）\n5. 重新開啟對應App\n6. 重啟穿戴裝置及手機",
+{id:"F1.2",cat:"F.穿戴裝置",q:"數據無法正常更新",a:"請先確認是哪種裝置：\nAcer 指環 → 請查看 F1.9（指環數據上傳不完整）\n華碩手錶 → 請查看 F1.24（手錶資料未同步至後台）\nGarmin 手環 → 請查看 F1.17（Garmin 數據未上傳）\n\n通用初步排解（適用所有裝置）：\n1. 確認裝置電量充足（建議30%以上）\n2. 確認手機藍牙已開啟\n3. 關閉手機藍牙 → 等待約10秒 → 重新開啟\n4. 將裝置靠近手機（建議30公分內）\n5. 重新開啟對應App\n6. 重啟穿戴裝置及手機"},
 {id:"F1.3",cat:"F.穿戴裝置",q:"錶面較大，手腕活動時，影響動作",a:"可至少隔一指的寬度往上戴。依照每個人的手臂舒適度，可以稍微鬆一點。"},
 {id:"F1.4",cat:"F.穿戴裝置",q:"戒指指環比較大，容易鬆脫",a:"建議順序：\n1. 先試著戴中指或是慣用手食指\n2. 請研發部設置止滑墊片\n3. 更換小尺寸指環"},
 {id:"F1.5",cat:"F.穿戴裝置",q:"指環無法連線",a:"・確認指環是否有電\n・重新連接裝置"},
@@ -397,6 +397,22 @@ function exportCSV(){
 }
 
 let isLoading=false;
+
+// ── 清空對話 ──
+function clearChat(){
+  if(!confirm('確定要清空對話紀錄嗎？'))return;
+  const wrap = document.getElementById('chatWrap');
+  wrap.innerHTML = `<div id="welcome">
+    <div class="welcome-icon"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg></div>
+    <div class="welcome-title">您好！我是小智 👋</div>
+    <div class="welcome-sub">智平衡健康事業 AI 助理<br>請選擇產品類別，或直接輸入您的問題</div>
+  </div>`;
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  isLoading = false;
+  document.getElementById('sendBtn').disabled = false;
+  document.getElementById('hintBar').textContent = '由 AI 自動回覆，重要事項請聯繫診所同仁確認';
+  document.getElementById('hintBar').style.color = '';
+}
 function setCat(k,btn){
   document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -517,6 +533,27 @@ function scroll(){const a=document.getElementById('chatArea');a.scrollTop=a.scro
 function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
 function autoResize(el){el.style.height='44px';el.style.height=Math.min(el.scrollHeight,120)+'px';}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ── 語音輸入 ──
+function toggleVoice(){
+  const btn = document.getElementById('voiceBtn');
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ alert('您的瀏覽器不支援語音輸入，建議使用 Chrome 或 Edge。'); return; }
+  if(btn && btn.classList.contains('recording')){
+    if(window._recognition) window._recognition.stop();
+    return;
+  }
+  const r = new SR();
+  window._recognition = r;
+  r.lang = 'zh-TW';
+  r.continuous = false;
+  r.interimResults = true;
+  r.onstart = () => { if(btn){ btn.classList.add('recording'); } document.getElementById('inputBox').placeholder = '🎙 聆聽中，請說話…'; };
+  r.onresult = (e) => { const t = Array.from(e.results).map(x=>x[0].transcript).join(''); document.getElementById('inputBox').value = t; autoResize(document.getElementById('inputBox')); };
+  r.onend = () => { if(btn){ btn.classList.remove('recording'); } document.getElementById('inputBox').placeholder = '輸入您的問題…'; };
+  r.onerror = () => { if(btn){ btn.classList.remove('recording'); } document.getElementById('inputBox').placeholder = '輸入您的問題…'; };
+  r.start();
+}
 </script>
 </body>
 </html>
