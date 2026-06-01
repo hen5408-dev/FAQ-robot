@@ -92,11 +92,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--t9);display:flex;f
     <div class="welcome-title">您好！我是小智 👋</div>
     <div class="welcome-sub">智平衡健康事業 AI 助理<br>請選擇產品類別，或直接輸入您的問題</div>
     <div class="cat-wrap">
-      <button class="cat-btn" onclick="setCat('6th',this)">🔴 第六代紅光</button>
-      <button class="cat-btn" onclick="setCat('device',this)">💍 穿戴裝置</button>
+      <button class="cat-btn" onclick="setCat('controller',this)">🔴 紅光控制器</button>
+      <button class="cat-btn" onclick="setCat('garment',this)">👕 紅光衣</button>
+      <button class="cat-btn" onclick="setCat('wearable',this)">⌚ 穿戴裝置</button>
       <button class="cat-btn" onclick="setCat('app',this)">📱 APP藍芽</button>
-      <button class="cat-btn" onclick="setCat('fee',this)">💳 費用合約</button>
-      <button class="cat-btn" onclick="setCat('cloth',this)">👕 衣服儀器</button>
+      <button class="cat-btn" onclick="setCat('contract',this)">💳 合約費用</button>
+      <button class="cat-btn" onclick="setCat('other',this)">📋 其他項目</button>
     </div>
     <div class="sugg-wrap" id="suggWrap"></div>
   </div>
@@ -258,9 +259,8 @@ const FAQ=[
 
 const WEBHOOK='https://aiwisebalancegroup.com/webhook/FAQ-robot';
 const SUGG_GROUPS={
-  '6th':[
+  'controller':[
     { title:'⚠️ 突發狀況', items:[
-      '貼片沒有亮滿12個貼片',
       '儀器LOGO燈為黃燈閃爍',
       '儀器LOGO燈為紅燈閃爍',
       '治療儀器開機後直接關機',
@@ -270,23 +270,49 @@ const SUGG_GROUPS={
       '出現合約到期提示音，導致儀器無法正常使用',
       '出現【今日已使用】異常訊號',
     ]},
-    { title:'身體反應', items:[
-      '穿了以後會頭暈、心跳加快？其他症狀？',
-      '穿了之後皮膚很癢，沒辦法穿怎麼辦？',
-    ]},
-    { title:'使用操作', items:[
-      '極智衣怎麼穿才對？',
-      '當天可以做幾次？',
-      '紅光治療中可以中斷嗎？',
+    { title:'操作說明', items:[
+      '紅光控制器怎麼操作？',
       '治療中提示音及燈號顯示',
+      '紅光治療中可以中斷嗎？',
+      '當天可以做幾次？',
+      '怎麼知道控制器有正常運作？',
     ]},
-    { title:'充電保養', items:[
+    { title:'充電', items:[
       '充電注意事項',
       '充電失敗、四小時未飽電、充電時燈號熄滅',
-      '第六代紅光極智衣怎麼洗滌保養？',
+      '帶到國外電壓不同，會不會無法充電？',
+      '出國坐飛機，儀器要怎麼帶？',
     ]},
   ],
-  'device':[
+  'garment':[
+    { title:'⚠️ 衣服異常', items:[
+      '貼片沒有亮滿12個貼片',
+      '插銷歪了 / 插頭彎曲變形 / 接頭斷掉',
+      '衣服沒有亮紅光',
+      '儀器背帶鬆脫',
+    ]},
+    { title:'穿戴使用', items:[
+      '極智衣怎麼穿才對？',
+      '第六代紅光極智衣是什麼做的？',
+      '什麼時候穿比較好？',
+      '一天可以做幾次？間隔多久？',
+      '皮膚有傷口，能直接照射嗎？',
+    ]},
+    { title:'清洗保養', items:[
+      '第六代紅光極智衣怎麼洗滌保養？',
+      '洗後，會不會影響效果？',
+    ]},
+    { title:'身體反應', items:[
+      '穿了以後會頭暈、心跳加快？',
+      '穿了之後皮膚很癢，沒辦法穿怎麼辦？',
+    ]},
+    { title:'衣服與尺寸', items:[
+      '什麼時候可以拿到第六代紅光極智衣？',
+      '我覺得極智衣Size不對？',
+      '多久回來看診？',
+    ]},
+  ],
+  'wearable':[
     { title:'⚠️ 數據異常', items:[
       '指環及手錶的數據上傳不完整',
       '正常配戴指環，但某段心率、活動、壓力、HRV或其他資料缺失',
@@ -331,7 +357,7 @@ const SUGG_GROUPS={
       '未連藍芽的情況下，使用儀器治療，時間未滿60分鐘就結束',
     ]},
   ],
-  'fee':[
+  'contract':[
     { title:'費用', items:[
       '轉帳帳號是什麼？',
       '請問是開發票還是收據？',
@@ -345,18 +371,24 @@ const SUGG_GROUPS={
       '想轉其他方案',
     ]},
   ],
-  'cloth':[
-    { title:'衣服儀器', items:[
-      '什麼時候可以拿到第六代紅光極智衣？',
-      '我覺得極智衣Size不對？',
-      '多久回來看診？',
-      '儀器有無法遙控解決的問題',
-    ]},
+  'other':[
     { title:'護您穩', items:[
       '護您穩是什麼材質，作用是什麼？',
       '護您穩多久會有一件？最多幾件？',
       '護您穩貼片的效期有永久的嗎？',
       '護您穩貼片會渲染，怎麼會這樣？',
+    ]},
+    { title:'客服流程', items:[
+      '如何判斷初診還是複診？',
+      '患者症狀回報怎麼處理？',
+      '需要直接轉諮詢師的項目有哪些？',
+      '退押金流程是什麼？',
+      '為什麼不能開醫療收據或三聯式發票？',
+    ]},
+    { title:'診所資訊', items:[
+      '台北診所停車資訊？',
+      '台中診所停車資訊？',
+      '高雄診所停車資訊？',
     ]},
   ],
 }
@@ -427,7 +459,7 @@ function setCat(k,btn){
   const guideEl = document.createElement('div');
   guideEl.className = 'msg-row';
 
-  const catLabels = {'6th':'第六代紅光極智衣','device':'穿戴裝置（手錶/指環）','app':'APP與藍芽問題','fee':'費用與合約','cloth':'衣服儀器與護您穩'};
+  const catLabels = {'controller':'紅光控制器','garment':'紅光衣','wearable':'穿戴裝置（手錶/指環）','app':'APP與藍芽問題','contract':'合約與費用','other':'其他項目'};
   const catLabel = catLabels[k] || k;
 
   let groupsHTML = '';
