@@ -695,16 +695,15 @@ function setCat(k,btn){
   btn.classList.add('active');
   const welcome = document.getElementById('welcome');
   if(welcome) welcome.style.display='none';
+
+  const groups = SUGG_GROUPS[k];
+  if(!groups) return;
+
   // 清除上次返回後隱藏的舊對話節點
   const wrap = document.getElementById('chatWrap');
   Array.from(wrap.children).forEach(el => {
     if(el.id !== 'welcome') el.remove();
   });
-
-  const groups = SUGG_GROUPS[k];
-  if(!groups) return;
-
-  const wrap = document.getElementById('chatWrap');
   const guideEl = document.createElement('div');
   guideEl.className = 'msg-row';
 
