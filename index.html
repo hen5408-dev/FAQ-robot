@@ -677,14 +677,16 @@ function clearChat(){
   document.getElementById('hintBar').style.color = '';
 }
 function goBackToWelcome(){
-  // 清除聊天內容
+  // 隱藏所有對話節點（保留，不刪除）
   const wrap = document.getElementById('chatWrap');
-  wrap.innerHTML = '';
+  const welcome = document.getElementById('welcome');
+  Array.from(wrap.children).forEach(el => {
+    if(el.id !== 'welcome') el.style.display='none';
+  });
   // 重設分類選取狀態
   document.querySelectorAll('.cat-btn,.cat-card').forEach(b=>b.classList.remove('active'));
   currentCategory = '';
   // 顯示歡迎頁
-  const welcome = document.getElementById('welcome');
   if(welcome) welcome.style.display='';
 }
 
@@ -693,6 +695,11 @@ function setCat(k,btn){
   btn.classList.add('active');
   const welcome = document.getElementById('welcome');
   if(welcome) welcome.style.display='none';
+  // 清除上次返回後隱藏的舊對話節點
+  const wrap = document.getElementById('chatWrap');
+  Array.from(wrap.children).forEach(el => {
+    if(el.id !== 'welcome') el.remove();
+  });
 
   const groups = SUGG_GROUPS[k];
   if(!groups) return;
@@ -724,7 +731,7 @@ function setCat(k,btn){
       <div class="guide-bubble">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
           <strong>已切換到【${catLabel}】</strong>
-          <button onclick="goBackToWelcome()" style="display:flex;align-items:center;gap:4px;padding:4px 10px;border:1.5px solid var(--gl);background:#fff;border-radius:20px;font-size:11px;color:var(--g2);cursor:pointer;font-weight:600;transition:all .15s;">← 重新選擇</button>
+          <button onclick="goBackToWelcome()" style="display:flex;align-items:center;gap:5px;padding:6px 14px;border:none;background:var(--g2);border-radius:20px;font-size:13px;color:#fff;cursor:pointer;font-weight:700;box-shadow:0 2px 8px rgba(33,122,74,.35);transition:all .15s;">◀ 返回</button>
         </div>
         <span style="font-size:13px;color:var(--t6)">請問您想了解哪方面的問題呢？</span>
         ${groupsHTML}
